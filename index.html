@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتبة الصديقين</title>
+<style>
+/* خط تجوال: يعمل إن كان مثبتًا على الجهاز، أو ضع Tajawal-Regular.ttf و Tajawal-Bold.ttf بجانب هذا الملف */
+@font-face{font-family:"Tajawal";font-weight:400 500;src:local("Tajawal"),local("Tajawal Regular"),local("Tajawal-Regular"),url("Tajawal-Regular.ttf") format("truetype")}
+@font-face{font-family:"Tajawal";font-weight:600 900;src:local("Tajawal Bold"),local("Tajawal-Bold"),url("Tajawal-Bold.ttf") format("truetype")}
+:root{--bg:#f5f6f8;--s:#fff;--ink:#101828;--mut:#667085;--line:#e4e7ec;--pri:#0f766e;--pri-d:#0b5c56;--pri-s:#e7f4f2;--ok:#16a34a;--bad:#dc2626;--bad-s:#fef2f2;--sb:208px;--r:14px;--sh:0 1px 2px rgba(16,24,40,.06);--receipt-w:80mm;--receipt-pad:3mm 4mm 10mm}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Tajawal","Segoe UI","Noto Sans Arabic",Tahoma,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;transition:background .12s,transform .08s,border-color .12s,color .12s}
+button:active{transform:scale(.96)}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+.hide{display:none!important}
+svg{flex:none}
+.shell{display:grid;grid-template-columns:var(--sb) 1fr;min-height:100vh}
+.sb{position:sticky;top:0;height:100vh;background:var(--s);border-inline-end:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 14px;font-weight:800;font-size:16px}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--pri);color:#fff;display:grid;place-items:center}
+.nav,.tg{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:10px;color:var(--mut);font-weight:600;width:100%}
+.nav:hover,.tg:hover{background:#f2f4f7;color:var(--ink)}
+.nav.on{background:var(--pri-s);color:var(--pri)}
+.tg{margin-top:auto;height:40px}
+.tg svg{transition:transform .2s}
+.shell.col{--sb:68px}
+.shell.col .lb,.shell.col .t{display:none}
+.shell.col .nav,.shell.col .tg{justify-content:center;padding:0}
+.shell.col .tg svg{transform:rotate(180deg)}
+.main{padding:20px 24px 28px;min-width:0}
+.ph h2{margin:0;font-size:24px;font-weight:800}
+.ph p{margin:2px 0 16px;color:var(--mut)}
+.sale{display:grid;grid-template-columns:1fr 350px;gap:16px;align-items:start}
+.sale>div{min-width:0}
+.sr{position:relative;margin-bottom:12px}
+.sr .si{position:absolute;inset-inline-start:16px;top:18px;color:var(--mut)}
+.sr input{width:100%;height:56px;padding:0 50px;border:1px solid var(--line);background:var(--s);border-radius:var(--r);font-size:17px;box-shadow:var(--sh)}
+.sr input:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-s)}
+.kbd{position:absolute;inset-inline-end:14px;top:15px;font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:6px;padding:2px 7px;background:#f9fafb}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{height:34px;padding:0 12px;font-size:14px;border-radius:999px;background:var(--s);border:1px solid var(--line);font-weight:600;color:#344054;white-space:nowrap}
+.chip:hover{border-color:#98a2b3}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:8px}
+.book{background:var(--s);border:1.5px solid var(--line);border-radius:12px;padding:9px 10px;display:flex;flex-direction:column;gap:5px;cursor:pointer;user-select:none;transition:border-color .12s,background .12s}
+.book:hover{border-color:#98a2b3}
+.book.sel{border-color:var(--pri);background:var(--pri-s)}
+.bh{display:flex;align-items:center;gap:6px;min-width:0}
+.bn{flex:1;min-width:0;font-weight:700;font-size:14.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ck{color:var(--pri);display:grid}
+.bs{color:var(--mut);font-size:12px;margin-top:-3px}
+.bf{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.bp{font-weight:800;font-size:16px;white-space:nowrap}
+.bp small{font-size:10.5px;color:var(--mut);font-weight:600;margin-inline-start:3px}
+.ctl{display:flex;align-items:center}
+.ctl button{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#fff;border:1px solid var(--line)}
+.ctl .plus{background:var(--pri);border-color:var(--pri);color:#fff}
+.ctl .plus:hover{background:var(--pri-d)}
+.ctl b{min-width:22px;text-align:center;font-size:16px}
+.pop{animation:pop .14s ease-out}
+@keyframes pop{from{transform:scale(.97)}to{transform:none}}
+.cart{position:sticky;top:20px;height:calc(100vh - 40px);background:var(--s);border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;box-shadow:var(--sh);overflow:hidden}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.ch h3{margin:0;font-size:17px}
+.ch h3 small{color:var(--mut);font-weight:600;font-size:13px;margin-inline-start:6px}
+.ch>div{display:flex;gap:8px;align-items:center}
+.pill{background:var(--pri-s);color:var(--pri);font-weight:700;font-size:13px;padding:3px 10px;border-radius:99px}
+.cx{display:none}
+.lines{flex:1;overflow:auto;padding:4px 18px}
+.ln{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.lt{flex:1;min-width:0}
+.lt b{display:block;font-weight:600;font-size:14px}
+.lt span{color:var(--mut);font-size:13px}
+.ls{font-weight:700}
+.rm{width:32px;height:32px;border-radius:8px;color:var(--mut);display:grid;place-items:center}
+.rm:hover{background:var(--bad-s);color:var(--bad)}
+.emp{text-align:center;color:var(--mut);padding:40px 16px}
+.ei{font-size:40px}
+.emp b{display:block;color:var(--ink);margin:8px 0 2px}
+.cf{padding:16px 18px;border-top:1px solid var(--line);background:#fcfcfd}
+.row{display:flex;justify-content:space-between;align-items:baseline;color:var(--mut)}
+.row b{color:var(--ink)}
+.tot{font-size:30px;font-weight:800;color:var(--ink);line-height:1.2}
+.tot small{font-size:14px;color:var(--mut);font-weight:600}
+.bump{animation:bump .18s}
+@keyframes bump{50%{transform:scale(1.06)}}
+.inp{width:100%;height:46px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.inp:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-s)}
+.cta{width:100%;height:60px;margin-top:10px;border-radius:14px;background:var(--pri);color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px}
+.cta:hover{background:var(--pri-d)}
+.cta:disabled{background:#d0d5dd;cursor:not-allowed}
+.nw{width:100%;height:42px;margin-top:8px;border-radius:12px;color:var(--mut);font-weight:600;border:1px solid var(--line)}
+.nw:hover{background:#f2f4f7;color:var(--ink)}
+.nw.hl{background:var(--ok);border-color:var(--ok);color:#fff}
+#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,16px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:60;display:flex;gap:8px;align-items:center;box-shadow:0 8px 24px rgba(16,24,40,.2)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast{max-width:92vw;white-space:nowrap}
+body.co #toast{bottom:auto;top:16px;transform:translate(-50%,-16px)}
+body.co #toast.on{transform:translate(-50%,0)}
+#toast i{width:8px;height:8px;border-radius:50%;background:#4ade80}
+#toast.bad i{background:#f87171}
+#scrim{position:fixed;inset:0;background:rgba(16,24,40,.4);opacity:0;pointer-events:none;transition:opacity .2s;z-index:35}
+#scrim.on{opacity:1;pointer-events:auto}
+#bar{display:none;position:fixed;inset:auto 12px 12px 12px;height:60px;z-index:30;align-items:center;justify-content:space-between;gap:12px;background:var(--pri);color:#fff;border-radius:16px;padding:0 18px;font-weight:700;box-shadow:0 8px 24px rgba(15,118,110,.35)}
+#bar span{display:flex;align-items:center;gap:8px}
+.tb{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tb .sr{flex:1;min-width:200px;margin:0}
+.sel2{height:56px;padding:0 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--s)}
+.btn{height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{background:#f2f4f7}
+.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.p:hover{background:var(--pri-d)}
+.btn.d{color:var(--bad)}
+.btn.d:hover{background:var(--bad-s)}
+.btn.arm{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.sm{height:36px;padding:0 12px;font-size:14px}
+.tbl{background:var(--s);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tr{display:grid;grid-template-columns:1fr 170px 130px 190px;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line)}
+.tr:last-child{border:0}
+.tr.th{background:#f9fafb;color:var(--mut);font-size:13px;font-weight:700}
+.tr:not(.th):hover{background:#fafbfc}
+.tr.ed{background:var(--pri-s)}
+.tr.o{grid-template-columns:70px 1fr 170px 70px 120px 130px}
+.cn{font-weight:600}
+.cs{color:var(--mut)}
+.cp{font-weight:700}
+.ca{display:flex;gap:6px;justify-content:flex-end}
+.tr .inp{height:40px}
+.card{background:var(--s);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:12px;max-width:640px}
+.card h3{margin:0 0 2px;font-size:16px}
+.card p{margin:0 0 12px;color:var(--mut);font-size:14px}
+.seg{display:inline-flex;background:#f2f4f7;padding:3px;border-radius:12px}
+.seg button{height:38px;padding:0 18px;border-radius:9px;font-weight:600;color:var(--mut)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:var(--sh)}
+@media (max-width:1100px){
+  .shell{--sb:68px}
+  .lb,.t{display:none}
+  .nav,.tg{justify-content:center;padding:0}
+  .tg{display:none}
+  .sale{grid-template-columns:1fr}
+  .cart{position:fixed;inset:auto 0 0 0;height:auto;max-height:86vh;border-radius:20px 20px 0 0;z-index:40;transform:translateY(105%);transition:transform .22s ease;box-shadow:0 -10px 40px rgba(16,24,40,.18)}
+  .cart.open{transform:none}
+  .ctl button{width:40px;height:40px}
+  .cx{display:grid}
+  #bar{display:flex}
+  .main{padding-bottom:92px}
+  #toast{bottom:84px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+}
+@media (max-width:700px){
+  .shell{grid-template-columns:1fr}
+  .sb{position:static;height:auto;flex-direction:row;padding:8px 12px;border-inline-end:0;border-bottom:1px solid var(--line)}
+  .brand{padding:0;margin-inline-end:auto}
+  .nav{width:44px}
+  .main{padding:14px 14px 92px}
+  .ph h2{font-size:21px}
+  .kbd{display:none}
+  .grid{grid-template-columns:1fr}
+  .book{display:grid;grid-template-columns:1fr auto;column-gap:10px;row-gap:2px}
+  .bh{grid-column:1;grid-row:1}
+  .bf{display:contents}
+  .bp{grid-column:1;grid-row:2}
+  .bs{grid-column:1;grid-row:3;margin:0}
+  .ctl{grid-column:2;grid-row:1/4;align-self:center}
+  .ctl button{width:42px;height:42px}
+  .tr{grid-template-columns:1fr auto;grid-template-areas:"n p" "s a"}
+  .tr.o{grid-template-areas:none}
+  .cn{grid-area:n}.cs{grid-area:s}.cp{grid-area:p}.ca{grid-area:a}
+  .tr.th{display:none}
+}
+/* ===== الوصل 80mm: عدّل --receipt-w أو @page لتغيير المقاس ===== */
+#receipt{display:none}
+.rc{font-family:"Tajawal",Tahoma,Arial,sans-serif;color:#000;font-size:13px;line-height:1.4;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rh{text-align:center}
+.rh h1{margin:0;font-size:23px;line-height:1.25;font-weight:800}
+.rh div{font-size:12px;margin-top:2px}
+.rl{border-top:1px dashed #000;margin:8px 0}
+.rw{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:2px 0}
+.rw b{text-align:left;font-weight:700;overflow-wrap:anywhere}
+.rw span{white-space:nowrap}
+.ri{width:100%;border-collapse:collapse;table-layout:fixed}
+.ri th{font-size:11.5px;font-weight:700;padding:3px 0;border-top:1px solid #000;border-bottom:1px solid #000;text-align:right}
+.ri th:nth-child(2),.ri td:nth-child(2){width:14mm;text-align:center}
+.ri th:nth-child(3),.ri td:nth-child(3){width:19mm;text-align:left}
+.ri td{padding:4px 0;vertical-align:top;border-bottom:1px dotted #000;word-break:break-word}
+.ri td:nth-child(3){font-weight:700}
+.ri tr{page-break-inside:avoid}
+.ri tbody tr:last-child td{border-bottom:0}
+.rt{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid #000;border-bottom:2px solid #000;padding:6px 0;margin:6px 0}
+.rt span{font-size:14px;font-weight:700}
+.rt b{font-size:23px;font-weight:800}
+.rt small{font-size:12px;font-weight:700}
+.rf{text-align:center;margin-top:10px;line-height:1.7}
+.rf b{display:block;font-size:14px}
+.li{margin:5px 0}
+.li>b{display:block;font-weight:600}
+.li>div{display:flex;justify-content:space-between;font-size:12px}
+.li>div span:last-child{font-weight:700}
+.lj{margin:5px 0}
+.lf{display:flex;align-items:baseline;gap:4px}
+.lf b{max-width:62%;font-weight:700}
+.lf i{flex:1;border-bottom:1px dotted #000;min-width:8px}
+.lf span{font-weight:800}
+.lq{font-size:11.5px}
+.orn{text-align:center;letter-spacing:5px;font-size:10px}
+.dbl{border-top:3px double #000;margin:7px 0}
+.rc.t2{font-size:12.5px}
+.rc.t2 .rh h1{font-size:19px}
+.rc.t2 .rl{border-top:1px solid #000;margin:6px 0}
+.rc.t2 .rt{border:0;border-top:1px solid #000;padding:4px 0}
+.rc.t2 .rt b{font-size:21px}
+.rc.t3 .hd{background:#000;color:#fff;text-align:center;padding:8px 6px}
+.rc.t3 .hd h1{margin:0;font-size:21px;font-weight:800}
+.rc.t3 .hd div{font-size:12px}
+.rc.t3 .bx{border:1px solid #000;border-top:0;padding:5px 8px}
+.rc.t3 .ri{margin:8px 0 6px}
+.rc.t3 .ri th{background:#000;color:#fff;border:1px solid #000;padding:4px 5px}
+.rc.t3 .ri td{border:1px solid #000;padding:4px 5px}
+.rc.t3 .ri tbody tr:last-child td{border-bottom:1px solid #000}
+.rc.t3 .rt{background:#000;color:#fff;border:0;padding:8px;margin-top:6px}
+.rc.t3 .rf{border-top:1px solid #000;padding-top:6px}
+.rc.t4 .rh h1{font-size:24px}
+.rc.t4 .rt{border-top:3px double #000;border-bottom:3px double #000}
+.tps{display:flex;flex-wrap:wrap;gap:16px}
+.tp{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 10px 12px;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;transition:border-color .12s,background .12s}
+.tp:hover{border-color:#98a2b3}
+.tp.on{border-color:var(--pri);background:var(--pri-s)}
+.tp>b{font-size:15px}
+.pv{width:302px;background:#fff;padding:11px 15px 16px;box-shadow:0 1px 6px rgba(16,24,40,.18);pointer-events:none}
+@page{size:80mm auto;margin:0}
+@media print{
+  html,body{background:#fff!important;margin:0!important;padding:0!important;height:auto!important}
+  .shell,#bar,#toast,#scrim{display:none!important}
+  #receipt{display:block!important;width:var(--receipt-w);padding:var(--receipt-pad);box-sizing:border-box;margin:0 auto}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+  <aside class="sb">
+    <div class="brand"><div class="logo" data-ic="book"></div><span class="t">مكتبة الصديقين</span></div>
+    <button class="nav on" data-v="sale"><span data-ic="receipt"></span><span class="lb">البيع</span></button>
+    <button class="nav" data-v="books"><span data-ic="book"></span><span class="lb">الكتب</span></button>
+    <button class="nav" data-v="orders"><span data-ic="list"></span><span class="lb">الطلبات</span></button>
+    <button class="nav" data-v="settings"><span data-ic="gear"></span><span class="lb">الإعدادات</span></button>
+    <button class="tg" id="tg"><span data-ic="chev"></span><span class="lb">طي القائمة</span></button>
+  </aside>
+  <main class="main">
+    <section id="v-sale" class="sale">
+      <div>
+        <div class="ph"><h2>بيع الكتب</h2><p>اختر المرحلة والكتب المطلوبة لإتمام الطلب</p></div>
+        <div class="sr"><span class="si" data-ic="search"></span><input id="q" placeholder="ابحث عن اسم الكتاب..." autocomplete="off"><span class="kbd" id="kbd"></span></div>
+        <div class="chips" id="chips"></div>
+        <div class="grid" id="grid"></div>
+      </div>
+      <aside class="cart" id="cartEl">
+        <div class="ch"><h3>الطلب الحالي <small id="ono"></small></h3><div><span class="pill" id="pill"></span><button class="rm cx" id="cx" data-ic="x" aria-label="إغلاق"></button></div></div>
+        <div class="lines" id="lines"></div>
+        <div class="cf">
+          <div class="row"><span>عدد الكتب</span><b id="cnt">0</b></div>
+          <div class="row"><span>المجموع</span><div class="tot"><span id="total">0</span> <small>د.ع</small></div></div>
+          <input class="inp" id="cust" name="cust_nm" placeholder="اسم الزبون (اختياري)" autocomplete="off" autocapitalize="off" spellcheck="false" style="margin-top:10px">
+          <button class="cta" id="pbtn"><span data-ic="printer"></span>طباعة الوصل</button>
+          <button class="nw" id="nw">طلب جديد</button>
+        </div>
+      </aside>
+    </section>
+    <section id="v-books" class="hide">
+      <div class="ph"><h2>إدارة الكتب</h2><p>أضف كتبًا أو عدّل الأسماء والأسعار والمراحل</p></div>
+      <div class="tb"><div class="sr"><span class="si" data-ic="search"></span><input id="bq" placeholder="ابحث عن كتاب..." autocomplete="off"></div><select class="sel2" id="bst"></select><button class="btn p" id="badd" style="height:56px">+ إضافة كتاب</button></div>
+      <div class="tbl" id="btbl"></div>
+    </section>
+    <section id="v-orders" class="hide">
+      <div class="ph"><h2>الطلبات</h2><p>الوصولات المطبوعة، ويمكن إعادة طباعتها</p></div>
+      <div class="tbl" id="otbl"></div>
+    </section>
+    <section id="v-settings" class="hide">
+      <div class="ph"><h2>الإعدادات</h2><p>نموذج الوصل (80mm) وإدارة بيانات Demo</p></div>
+      <div class="card" style="max-width:none"><h3>نموذج الوصل</h3><p>جميع النماذج بمقاس 80mm للطابعة الحرارية. اضغط على النموذج لاختياره</p><div class="tps" id="tps"></div><div style="margin-top:14px"><button class="btn" id="tprint">طباعة وصل تجريبي</button></div></div>
+      <div class="card"><h3>البيانات</h3><p>التعديلات محفوظة في هذا المتصفح فقط</p><div class="tb" style="margin:0"><button class="btn d" id="rst">إعادة بيانات Demo الأصلية</button><button class="btn d" id="clr">مسح سجل الطلبات</button></div></div>
+    </section>
+  </main>
+</div>
+<button id="bar"></button>
+<div id="scrim"></div>
+<div id="toast"></div>
+<div id="receipt"></div>
+
+<script>
+/* ============ بيانات Demo (عدّلها هنا بسهولة: [اسم الكتاب, السعر]) ============ */
+const STAGES = ["الأول ابتدائي","الثاني ابتدائي","الثالث ابتدائي","الرابع ابتدائي","الخامس ابتدائي","السادس ابتدائي","الأول متوسط","الثاني متوسط","الثالث متوسط","الرابع إعدادي","الخامس إعدادي","السادس إعدادي"];
+const RD="كتاب القراءة", M="كتاب الرياضيات", AR="كتاب اللغة العربية", EN="كتاب اللغة الإنكليزية", SC="كتاب العلوم",
+      SO="كتاب الاجتماعيات", IS="كتاب التربية الإسلامية", GR="كتاب القواعد", MU="كتاب المطالعة", CO="كتاب الحاسوب",
+      ART="كتاب التربية الفنية", NA="كتاب التربية الوطنية", PE="كتاب التربية الرياضية", IM="كتاب الإملاء والخط",
+      PH="كتاب الفيزياء", CH="كتاب الكيمياء", BI="كتاب الأحياء", HI="كتاب التاريخ", GE="كتاب الجغرافية", LT="كتاب الأدب والنصوص";
+const SEED = {
+ "الأول ابتدائي":[[RD,3000],[M,3500],[SC,2500],[IS,2500],[EN,4000],[ART,2000],[PE,2000],["كتاب الأناشيد والمحفوظات",2000],[IM,2500],["كراس الكتابة",2000]],
+ "الثاني ابتدائي":[[RD,3000],[M,3500],[SC,3000],[IS,2500],[EN,4000],[SO,2500],[ART,2000],[IM,2500],[CO,3500],[PE,2000]],
+ "الثالث ابتدائي":[[RD,3500],[M,4000],[SC,3500],[SO,3000],[IS,3000],[EN,4500],[GR,3000],[IM,2500],[CO,3500],[ART,2000]],
+ "الرابع ابتدائي":[[RD,3500],[M,4500],[SC,4000],[SO,3500],[IS,3000],[EN,5000],[GR,3500],[IM,2500],[CO,4000],[ART,2000],[PE,2000]],
+ "الخامس ابتدائي":[[RD,4000],[M,5000],[SC,4500],[SO,4000],[IS,3500],[EN,5500],[GR,4000],[CO,4500],[NA,3000],[ART,2000]],
+ "السادس ابتدائي":[[RD,4000],[M,5500],[SC,5000],[SO,4500],[IS,3500],[EN,6000],[GR,4500],[CO,4500],[NA,3000],[MU,3500],[ART,2500]],
+ "الأول متوسط":[[M,6500],[AR,5500],[EN,7000],[SC,6000],[SO,5000],[IS,4000],[GR,4500],[MU,3500],[CO,5000],[ART,2500],[NA,3000]],
+ "الثاني متوسط":[[M,7000],[AR,5500],[EN,7500],[SC,6500],[SO,5000],[IS,4000],[GR,4500],[MU,3500],[CO,5000],[ART,2500],[NA,3000]],
+ "الثالث متوسط":[[M,7500],[AR,6000],[EN,8000],[SC,6500],[SO,5500],[IS,4500],[GR,5000],[MU,4000],[CO,5500],[NA,3000],[ART,2500]],
+ "الرابع إعدادي":[[M,8000],[AR,7000],[EN,8000],[PH,7500],[CH,7500],[BI,7000],[HI,6000],[GE,5500],[IS,4500],[CO,6000],[GR,5000],[LT,5000]],
+ "الخامس إعدادي":[[M,8500],[AR,7000],[EN,8500],[PH,8000],[CH,8000],[BI,7500],[HI,6000],[GE,6000],[IS,4500],[CO,6500],[GR,5500],[LT,5500]],
+ "السادس إعدادي":[[M,10000],[AR,8000],[EN,9000],[PH,10000],[CH,10000],[BI,9000],[HI,7000],[GE,6500],[IS,5000],[CO,7000],[GR,6000],[LT,6500],["كتاب الاقتصاد",6000]]
+};
+const KEY="siddiqeen_books_v1", SKEY="siddiqeen_stage_v1";
+function seedBooks(){let id=1,o=[];for(const s of STAGES)for(const [name,price] of SEED[s])o.push({id:id++,stage:s,name,price});return o}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(v)&&v.length)return v}catch(e){}return seedBooks()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(books))}catch(e){}}
+
+
+/* ============ الواجهة ============ */
+const OKEY="siddiqeen_orders_v1",QKEY="siddiqeen_seq_v1",TKEY="siddiqeen_tpl_v1";
+const $=id=>document.getElementById(id);
+const rd=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+const wr=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let books=load(),cart={},stage=STAGES[0],view="sale",curOrder=null,editId=null,orders=rd(OKEY,[]),seq=rd(QKEY,0),tpl=rd(TKEY,1);
+if(![1,2,3,4].includes(tpl))tpl=1;
+try{const s=localStorage.getItem(SKEY);if(STAGES.includes(s))stage=s}catch(e){}
+const fmt=n=>Number(n).toLocaleString("en-US");
+const pad=n=>String(n).padStart(2,"0");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=s=>String(s).toLowerCase().replace(/[\u064B-\u065F\u0640]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/\s+/g," ").trim();
+const byId=id=>books.find(b=>b.id===id);
+const cntTxt=n=>n===0?"لا كتب":n===1?"كتاب واحد":n===2?"كتابان":n<=10?n+" كتب":n+" كتابًا";
+const P={receipt:"M4 2v20l2-1.5L8 22l2-1.5 2 1.5 2-1.5 2 1.5 2-1.5 2 1.5V2l-2 1.5L16 2l-2 1.5L12 2l-2 1.5L8 2 6 3.5zM8 8h8M8 12h8M8 16h5",book:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",list:"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",gear:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",search:"M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3",plus:"M12 5v14M5 12h14",minus:"M5 12h14",printer:"M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z",chev:"M15 18l-6-6 6-6",x:"M18 6 6 18M6 6l12 12",check:"M20 6 9 17l-5-5"};
+const ic=(n,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${P[n]}"/></svg>`;
+let tt;function toast(m,bad){const t=$("toast");t.innerHTML=`<i></i>${esc(m)}`;t.className="on"+(bad?" bad":"");clearTimeout(tt);tt=setTimeout(()=>t.className="",1600)}
+function bump(e){e.classList.remove("bump");void e.offsetWidth;e.classList.add("bump")}
+function two(b,fn){if(b.dataset.arm){fn();return}b.dataset.arm=1;const t=b.textContent;b.textContent="تأكيد؟";b.classList.add("arm");setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent=t;b.classList.remove("arm")}},3000)}
+
+/* ---- البيع ---- */
+function cardHTML(b){const n=cart[b.id]||0,sr=$("q").value.trim();return `<div class="book${n?" sel":""}" data-id="${b.id}" title="${esc(b.name+" — "+b.stage)}"><div class="bh"><div class="bn">${esc(b.name)}</div>${n?`<span class="ck">${ic("check",16)}</span>`:""}</div>${sr?`<div class="bs">${esc(b.stage)}</div>`:""}<div class="bf"><div class="bp">${fmt(b.price)}<small>د.ع</small></div><div class="ctl">${n?`<button data-a="dec" aria-label="إنقاص">${ic("minus")}</button><b>${n}</b>`:""}<button class="plus" data-a="inc" aria-label="إضافة">${ic("plus")}</button></div></div></div>`}
+function refreshCard(id){const b=byId(id),el=document.querySelector(`.book[data-id="${id}"]`);if(!b||!el)return;el.outerHTML=cardHTML(b);document.querySelector(`.book[data-id="${id}"]`).classList.add("pop")}
+function renderStages(){const s=$("q").value.trim();$("chips").innerHTML=STAGES.map(x=>`<button class="chip${x===stage&&!s?" on":""}" data-s="${esc(x)}">${esc(x)}</button>`).join("")}
+function visible(){const q=norm($("q").value);return q?books.filter(b=>norm(b.name+" "+b.stage).includes(q)):books.filter(b=>b.stage===stage)}
+function renderGrid(){const l=visible();$("grid").innerHTML=l.length?l.map(cardHTML).join(""):`<div class="emp" style="grid-column:1/-1"><div class="ei">🔎</div><b>لا توجد نتائج</b>جرّب كلمة أخرى</div>`;renderStages()}
+function summary(){const ids=Object.keys(cart).map(Number).filter(i=>byId(i)&&cart[i]>0);let c=0,t=0;ids.forEach(i=>{c+=cart[i];t+=cart[i]*byId(i).price});return{ids,c,t}}
+function renderCart(){const{ids,c,t}=summary();
+  $("lines").innerHTML=ids.length?ids.map(i=>{const b=byId(i),q=cart[i];return `<div class="ln"><div class="lt"><b>${esc(b.name)}</b><span>${q} × ${fmt(b.price)}</span></div><div class="ls">${fmt(q*b.price)}</div><button class="rm" data-rm="${i}" aria-label="حذف">${ic("x",16)}</button></div>`}).join(""):`<div class="emp"><div class="ei">📚</div><b>لم تتم إضافة كتب بعد</b>اختر الكتب المطلوبة وسيظهر الطلب هنا</div>`;
+  $("ono").textContent="#"+String(curOrder?curOrder.no:seq+1).padStart(4,"0");$("cnt").textContent=c;$("total").textContent=fmt(t);$("pill").textContent=cntTxt(c);
+  $("pbtn").disabled=!c;
+  $("nw").classList.toggle("hl",!!curOrder);$("nw").textContent=curOrder?"✔ تمت الطباعة — طلب جديد":"طلب جديد";
+  $("bar").innerHTML=`<span>${ic("receipt")}الطلب</span><span>${c?cntTxt(c)+" · "+fmt(t)+" د.ع":"فارغ"}</span>`}
+function setQty(id,d){const b=byId(id);if(!b)return;const n=Math.max(0,(cart[id]||0)+d);if(n)cart[id]=n;else delete cart[id];curOrder=null;refreshCard(id);renderCart();bump($("total"));
+  if(d>0)toast("تمت إضافة "+b.name);else if(!n)toast("تم حذف الكتاب من الطلب",1)}
+function removeLine(id){delete cart[id];curOrder=null;refreshCard(id);renderCart();bump($("total"));toast("تم حذف الكتاب من الطلب",1)}
+function openCart(){document.body.classList.add("co");$("cartEl").classList.add("open");$("scrim").classList.add("on")}
+function closeCart(){document.body.classList.remove("co");$("cartEl").classList.remove("open");$("scrim").classList.remove("on")}
+function newOrder(){cart={};curOrder=null;const c=$("cust");c.value="";c.defaultValue="";c.removeAttribute("value");$("q").value="";renderGrid();renderCart();closeCart()}
+
+/* ---- الوصل والطباعة ---- */
+const TN=["كلاسيكي","مختصر","رسمي","أنيق"];
+const SAMPLE={no:125,date:Date.now(),name:"حسين",count:4,total:26000,items:[{name:"كتاب الرياضيات",price:7500,q:1},{name:"كتاب العلوم",price:6500,q:1},{name:"كتاب اللغة العربية",price:6000,q:2}]};
+function recHTML(o,t=tpl){const d=new Date(o.date),dt=`${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`,tmr=d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}),tm=`<bdi dir="ltr">${tmr}</bdi>`,no="#"+String(o.no).padStart(4,"0"),
+  R=(x,y)=>`<div class="rw"><span>${x}</span><b>${y}</b></div>`,nm=o.name?R("الزبون",esc(o.name)):"",L='<div class="rl"></div>',
+  tbl=`<table class="ri"><thead><tr><th>الكتاب</th><th>الكمية</th><th>السعر</th></tr></thead><tbody>${o.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.q}</td><td>${fmt(i.q*i.price)}</td></tr>`).join("")}</tbody></table>`,
+  li=o.items.map(i=>`<div class="li"><b>${esc(i.name)}</b><div><span>${i.q} × ${fmt(i.price)}</span><span>${fmt(i.q*i.price)}</span></div></div>`).join(""),
+  lf=o.items.map(i=>`<div class="lj"><div class="lf"><b>${esc(i.name)}</b><i></i><span>${fmt(i.q*i.price)}</span></div><div class="lq">${i.q} × ${fmt(i.price)}</div></div>`).join(""),
+  tot=`<div class="rt"><span>المجموع</span><b>${fmt(o.total)} <small>د.ع</small></b></div>`,cnt=R("عدد الكتب",o.count),thx='شكرًا لتعاملكم معنا<b>مكتبة الصديقين</b>';
+  if(t===2)return `<div class="rc t2"><div class="rh"><h1>مكتبة الصديقين</h1></div><div class="rw" style="margin-top:6px"><span>${no}</span><b><bdi dir="ltr">${dt}&nbsp; ${tmr}</bdi></b></div>${nm}${L}${li}${L}${cnt}${tot}<div class="rf">شكرًا لتعاملكم معنا</div></div>`;
+  if(t===3)return `<div class="rc t3"><div class="hd"><h1>مكتبة الصديقين</h1><div>إيصال بيع كتب</div></div><div class="bx">${R("رقم الطلب",no)}${R("التاريخ",dt)}${R("الوقت",tm)}${nm}</div>${tbl}${cnt}${tot}<div class="rf">${thx}</div></div>`;
+  if(t===4)return `<div class="rc t4"><div class="rh"><div class="orn">◆ ◆ ◆</div><h1>مكتبة الصديقين</h1><div>إيصال بيع كتب</div></div><div class="dbl"></div>${R("رقم الطلب",no)}${R("التاريخ",dt)}${R("الوقت",tm)}${nm}<div class="dbl"></div>${lf}<div class="dbl"></div>${cnt}${tot}<div class="rf"><div class="orn">◆ ◆ ◆</div>${thx}</div></div>`;
+  return `<div class="rc"><div class="rh"><h1>مكتبة الصديقين</h1><div>إيصال بيع كتب</div></div>${L}${R("رقم الطلب",no)}${R("التاريخ",dt)}${R("الوقت",tm)}${nm}${L}${tbl}<div class="rl" style="margin-bottom:0"></div><div style="margin-top:6px">${cnt}</div>${tot}<div class="rf">${thx}</div></div>`}
+function printOrder(o){$("receipt").innerHTML=recHTML(o);setTimeout(()=>window.print(),30)}
+function doPrint(){if(view!=="sale")return;const{ids,c,t}=summary();if(!c)return;
+  if(!curOrder){seq++;wr(QKEY,seq);curOrder={no:seq,date:Date.now(),items:ids.map(i=>({name:byId(i).name,price:byId(i).price,q:cart[i]})),count:c,total:t};orders.unshift(curOrder);if(orders.length>300)orders.length=300}
+  curOrder.name=$("cust").value.trim();wr(OKEY,orders);renderCart();printOrder(curOrder)}
+
+/* ---- إدارة الكتب ---- */
+function renderBooks(){const q=norm($("bq").value),st=$("bst").value;
+  const l=books.filter(b=>(!st||b.stage===st)&&(!q||norm(b.name+" "+b.stage).includes(q)));
+  const opts=sel=>STAGES.map(s=>`<option${s===sel?" selected":""}>${esc(s)}</option>`).join("");
+  const ed=b=>`<div class="tr ed" data-id="${b?b.id:"new"}"><div class="cn"><input class="inp" data-f="name" placeholder="اسم الكتاب" value="${b?esc(b.name):""}"></div><div class="cs"><select class="inp" data-f="stage">${opts(b?b.stage:(st||stage))}</select></div><div class="cp"><input class="inp" data-f="price" type="number" min="0" step="500" placeholder="السعر" value="${b?b.price:""}"></div><div class="ca"><button class="btn p sm" data-save>حفظ</button><button class="btn sm" data-cancel>إلغاء</button></div></div>`;
+  $("btbl").innerHTML=`<div class="tr th"><div>الكتاب</div><div>المرحلة</div><div>السعر</div><div></div></div>`+(editId==="new"?ed(null):"")+l.map(b=>editId===b.id?ed(b):`<div class="tr" data-id="${b.id}"><div class="cn">${esc(b.name)}</div><div class="cs">${esc(b.stage)}</div><div class="cp">${fmt(b.price)} <small class="cs">د.ع</small></div><div class="ca"><button class="btn sm" data-edit>تعديل</button><button class="btn sm d" data-del>حذف</button></div></div>`).join("")+(!l.length&&editId!=="new"?`<div class="emp"><div class="ei">📚</div><b>لا توجد كتب</b></div>`:"");
+  const f=document.querySelector(".tr.ed input");if(f&&!f.value)f.focus()}
+$("btbl").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const tr=b.closest(".tr"),id=tr&&tr.dataset.id;
+  if(b.hasAttribute("data-edit")){editId=+id;renderBooks();const f=document.querySelector(".tr.ed input");if(f)f.focus()}
+  else if(b.hasAttribute("data-cancel")){editId=null;renderBooks()}
+  else if(b.hasAttribute("data-save")){const g=k=>tr.querySelector(`[data-f="${k}"]`).value,name=g("name").trim(),price=parseInt(g("price"));
+    if(!name||isNaN(price)||price<0){toast("أدخل اسم الكتاب والسعر",1);return}
+    if(id==="new")books.push({id:Math.max(0,...books.map(x=>x.id))+1,stage:g("stage"),name,price});
+    else{const k=byId(+id);k.name=name;k.price=price;k.stage=g("stage")}
+    save();editId=null;renderBooks();toast("تم حفظ الكتاب")}
+  else if(b.hasAttribute("data-del"))two(b,()=>{books=books.filter(x=>x.id!==+id);delete cart[+id];save();renderBooks();toast("تم حذف الكتاب",1)})});
+$("bq").addEventListener("input",renderBooks);$("bst").addEventListener("change",renderBooks);
+$("badd").onclick=()=>{editId="new";renderBooks()};
+
+/* ---- الطلبات والإعدادات ---- */
+function renderOrders(){$("otbl").innerHTML=orders.length?`<div class="tr th o"><div>الرقم</div><div>الزبون</div><div>التاريخ</div><div>الكتب</div><div>المجموع</div><div></div></div>`+orders.map(o=>{const d=new Date(o.date);return `<div class="tr o"><div class="cp">#${String(o.no).padStart(4,"0")}</div><div class="cn">${o.name?esc(o.name):"<span class=cs>بدون اسم</span>"}</div><div class="cs">${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}</div><div>${o.count}</div><div class="cp">${fmt(o.total)}</div><div class="ca"><button class="btn sm" data-re="${o.no}">إعادة طباعة</button></div></div>`}).join(""):`<div class="emp"><div class="ei">🧾</div><b>لا توجد طلبات بعد</b>الطلبات المطبوعة تظهر هنا</div>`}
+$("otbl").addEventListener("click",e=>{const b=e.target.closest("[data-re]");if(b){const o=orders.find(x=>x.no===+b.dataset.re);if(o)printOrder(o)}});
+function renderSettings(){$("tps").innerHTML=[1,2,3,4].map(k=>`<div class="tp${k===tpl?" on":""}" data-t="${k}"><b>${TN[k-1]}${k===tpl?" ✓":""}</b><div class="pv">${recHTML(SAMPLE,k)}</div></div>`).join("")}
+$("tps").onclick=e=>{const t=e.target.closest(".tp");if(!t)return;tpl=+t.dataset.t;wr(TKEY,tpl);renderSettings();toast("تم اختيار النموذج: "+TN[tpl-1])};
+$("tprint").onclick=()=>printOrder(SAMPLE);
+$("rst").onclick=function(){two(this,()=>{books=seedBooks();cart={};curOrder=null;save();toast("أُعيدت بيانات Demo الأصلية")})};
+$("clr").onclick=function(){two(this,()=>{orders=[];seq=0;wr(OKEY,orders);wr(QKEY,0);toast("تم مسح سجل الطلبات")})};
+
+/* ---- التنقل والأحداث ---- */
+function show(v){view=v;editId=null;closeCart();
+  ["sale","books","orders","settings"].forEach(n=>$("v-"+n).classList.toggle("hide",n!==v));
+  document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  $("bar").classList.toggle("hide",v!=="sale");
+  if(v==="sale"){renderGrid();renderCart()}else if(v==="books")renderBooks();else if(v==="orders")renderOrders();else renderSettings()}
+document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>show(b.dataset.v));
+$("tg").onclick=()=>$("shell").classList.toggle("col");
+$("grid").addEventListener("click",e=>{const c=e.target.closest(".book");if(!c)return;const a=e.target.closest("button");setQty(+c.dataset.id,a&&a.dataset.a==="dec"?-1:1)});
+$("chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;stage=b.dataset.s;$("q").value="";try{localStorage.setItem(SKEY,stage)}catch(x){}renderGrid()});
+$("lines").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(b)removeLine(+b.dataset.rm)});
+$("q").addEventListener("input",renderGrid);
+$("pbtn").onclick=doPrint;$("nw").onclick=newOrder;$("bar").onclick=openCart;$("scrim").onclick=closeCart;$("cx").onclick=closeCart;
+document.addEventListener("keydown",e=>{const k=e.key.toLowerCase(),m=e.ctrlKey||e.metaKey;
+  if(m&&k==="k"){e.preventDefault();show("sale");$("q").focus();$("q").select()}
+  else if(m&&k==="p"){e.preventDefault();doPrint()}
+  else if(e.key==="Escape"){if(editId!==null){editId=null;renderBooks()}else if($("cartEl").classList.contains("open"))closeCart();else if(view==="sale"&&$("q").value){$("q").value="";renderGrid()}}
+  else if(e.key==="Enter"){if(e.target===$("cust"))doPrint();else if(e.target.tagName==="INPUT"&&e.target.closest(".tr.ed"))e.target.closest(".tr.ed").querySelector("[data-save]").click()}});
+
+document.querySelectorAll("[data-ic]").forEach(e=>e.innerHTML=ic(e.dataset.ic));
+$("kbd").textContent=/Mac|iPhone|iPad/.test(navigator.platform)?"⌘ K":"Ctrl K";
+$("bst").innerHTML='<option value="">كل المراحل</option>'+STAGES.map(s=>`<option>${esc(s)}</option>`).join("");
+show("sale");
+</script>
+</body>
+</html>
